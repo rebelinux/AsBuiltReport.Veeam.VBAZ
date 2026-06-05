@@ -71,8 +71,6 @@ This report is compatible with the following PowerShell versions:
 | :--------------------: | :----------------: |
 |   :white_check_mark:   | :white_check_mark: |
 
-The Veeam Backup for Microsoft Azure As Built Report is only supported on PowerShell 5.1 when generating a report for Veeam Backup for Microsoft Azure v8 and later. For newer versions, the report can be generated using PowerShell 7.
-
 ## :wrench: System Requirements
 
 PowerShell 5.1/7 and the following PowerShell modules are required to generate a Veeam Backup for Microsoft Azure As Built report:
@@ -85,7 +83,7 @@ Network access to the VBAZ REST API, normally `https://<appliance>:11005`
 
 ### :closed_lock_with_key: Required Privileges
 
-A VBAZ account with read access to configuration, inventory, policy, session and restore point data.
+A VBAZ account with read access to configuration, inventory, policy, session and restore point data is required to generate the report.
 
 ## :package: Module Installation
 
@@ -287,7 +285,7 @@ The module currently collects these read-only endpoint groups:
 | Discovery at level 3       | `/cloudInfrastructure/availabilitySets`, `/cloudInfrastructure/availabilityZones`, `/cloudInfrastructure/keyVaults`, `/cloudInfrastructure/networkSecurityGroups`, `/cloudInfrastructure/storageAccounts`, `/cloudInfrastructure/sqlServers`, `/cloudInfrastructure/sqlElasticPools`, `/virtualMachines`, `/cloudInfrastructure/virtualNetworks`, `/cloudInfrastructure/virtualMachineSizes`, `/fileShares`, `/databases`, `/cosmosDb`, `/cloudInfrastructure/tags` |
 
 
-## :computer: Pwsh 5.1/7 Console Examples
+## :computer: Examples
 
 Below are a few examples of running the AsBuiltReport script against a Veeam Backup for Microsoft Azure appliance. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
 
