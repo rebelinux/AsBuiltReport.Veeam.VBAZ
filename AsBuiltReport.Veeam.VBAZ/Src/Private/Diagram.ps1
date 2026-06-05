@@ -1,5 +1,6 @@
 function New-AbrVbazDiagramInfo {
     [CmdletBinding()]
+    [OutputType([ordered])]
     param (
         $InputObject,
         [string[]] $Properties
@@ -18,6 +19,7 @@ function New-AbrVbazDiagramInfo {
 
 function ConvertTo-AbrVbazDiagramValue {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         $InputObject
     )
@@ -74,7 +76,6 @@ function New-AbrVbazDiagramItem {
 }
 
 function New-AbrVbazDiagramSummaryItem {
-    [CmdletBinding()]
     param (
         [string] $Name,
         [int] $Total,
@@ -108,9 +109,9 @@ function New-AbrVbazDiagramNodeTable {
     $ResolvedItems = @($Items | Where-Object { $_ -and (Test-AbrVbazDisplayValue -Value $_.Name) })
     if (-not $ResolvedItems) {
         $ResolvedItems = @([pscustomobject]@{
-            Name = "No $Label"
-            Info = @{}
-        })
+                Name = "No $Label"
+                Info = @{}
+            })
         # Keep the node's own icon for an empty category (e.g. an appliance with no restore points
         # yet) so the topology stays recognizable; only use the generic placeholder icon when the
         # node was not given an icon of its own.

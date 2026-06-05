@@ -119,6 +119,7 @@ function Invoke-AbrVbazRestMethod {
 
 function Get-AbrVbazObjectCollection {
     [CmdletBinding()]
+    [OutputType([object[]], [array])]
     param (
         $InputObject
     )
@@ -155,6 +156,7 @@ function Get-AbrVbazObjectCollection {
 
 function Get-AbrVbazCollection {
     [CmdletBinding()]
+    [OutputType([object[]])]
     param (
         [Parameter(Mandatory)]
         [string] $Path,
@@ -231,6 +233,7 @@ function Get-AbrVbazPropertyValue {
 
 function ConvertTo-AbrVbazDisplayValue {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         $InputObject,
         [string] $Default = '--'
@@ -338,7 +341,7 @@ function ConvertTo-AbrVbazByteSize {
         $Bytes = $Bytes / 1024
         $Index++
     }
-    "{0:N1} {1}" -f $Bytes, $Units[$Index]
+    '{0:N1} {1}' -f $Bytes, $Units[$Index]
 }
 
 function ConvertTo-AbrVbazSizeFromUnit {
@@ -386,6 +389,7 @@ function ConvertTo-AbrVbazDuration {
 
 function Get-AbrVbazServerTimeZoneLabel {
     [CmdletBinding()]
+    [OutputType([string])]
     param ()
 
     $TimeSource = @($script:AbrVbazInventory.SystemTime + $script:AbrVbazInventory.SystemServerInfo) | Where-Object { $_ } | Select-Object -First 1
@@ -408,6 +412,7 @@ function Get-AbrVbazServerTimeZoneLabel {
 
 function Test-AbrVbazDateTimeProperty {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         [string] $Name
     )
@@ -421,6 +426,7 @@ function Test-AbrVbazDateTimeProperty {
 
 function Get-AbrVbazDateTimeZoneLabel {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         [string] $Name,
         $Value
@@ -509,6 +515,7 @@ function Format-AbrVbazTablePropertyLabel {
 
 function Test-AbrVbazDisplayValue {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         $Value
     )
@@ -701,6 +708,7 @@ function Get-AbrVbazId {
 
 function Get-AbrVbazApplianceName {
     [CmdletBinding()]
+    [OutputType([string])]
     param ([string] $Default)
 
     $About = $script:AbrVbazInventory.SystemAbout | Select-Object -First 1
@@ -836,7 +844,7 @@ function Import-AbrVbazCaptureInventory {
         if ([IO.Path]::GetExtension($WorkingPath) -ne '.zip') {
             throw "CapturePath '$WorkingPath' must be a folder or ZIP file."
         }
-        $ExtractPath = Join-Path $env:TEMP ("AbrVbazCapture_{0}" -f ([guid]::NewGuid().ToString('N')))
+        $ExtractPath = Join-Path $env:TEMP ('AbrVbazCapture_{0}' -f ([guid]::NewGuid().ToString('N')))
         New-Item -ItemType Directory -Path $ExtractPath -Force | Out-Null
         Expand-Archive -LiteralPath $WorkingPath -DestinationPath $ExtractPath -Force
         $WorkingPath = $ExtractPath
@@ -864,9 +872,10 @@ function Import-AbrVbazCaptureInventory {
     foreach ($Name in $EndpointMap.Keys) {
         $Endpoint = $EndpointMap[$Name]
         $FullEndpoint = "/api/$($Options.ApiVersion)$Endpoint"
-        $Matches = @($Envelopes | Where-Object { $_.success -and ($_.path -eq $Endpoint -or $_.path -eq $FullEndpoint -or $_.path -like "*/$($Endpoint.TrimStart('/'))") })
+        # $Matches is a automatic variable in PWSH
+        $Match = @($Envelopes | Where-Object { $_.success -and ($_.path -eq $Endpoint -or $_.path -eq $FullEndpoint -or $_.path -like "*/$($Endpoint.TrimStart('/'))") })
         $Items = @()
-        foreach ($Envelope in $Matches) {
+        foreach ($Envelope in $Match) {
             $Items += @(Get-AbrVbazObjectCollection -InputObject $Envelope)
         }
         $script:AbrVbazInventory[$Name] = $Items
@@ -944,6 +953,7 @@ function Resolve-AbrVbazPolicyChildItem {
 
 function Get-AbrVbazPolicyChildItems {
     [CmdletBinding()]
+    [OutputType([object[]], [array])]
     param (
         [string] $CollectionName,
         $Policy,
@@ -960,8 +970,8 @@ function Get-AbrVbazPolicyChildItems {
     $Items = @($script:AbrVbazInventory["$($SafeName)_$Child"])
 
     @($Items | ForEach-Object { Resolve-AbrVbazPolicyChildItem -InputObject $_ } | Where-Object {
-        $_ -and @($_.PSObject.Properties | Where-Object { $_.Name -notlike '_*' -and (Test-AbrVbazDisplayValue -Value $_.Value) }).Count -gt 0
-    })
+            $_ -and @($_.PSObject.Properties | Where-Object { $_.Name -notlike '_*' -and (Test-AbrVbazDisplayValue -Value $_.Value) }).Count -gt 0
+        })
 }
 
 function ConvertTo-AbrVbazPolicyChildRow {
@@ -1029,6 +1039,7 @@ function New-AbrVbazCountObject {
 
 function New-AbrVbazGroupSummary {
     [CmdletBinding()]
+    [OutputType([array])]
     param (
         [object[]] $Items,
         [string[]] $GroupBy,
@@ -1055,15 +1066,16 @@ function New-AbrVbazGroupSummary {
     }
 
     @($Rows | Group-Object -Property Group | Sort-Object -Property Name | ForEach-Object {
-        $Output = [ordered]@{}
-        $Output[$GroupLabel] = $_.Name
-        $Output['Total'] = $_.Count
-        [pscustomobject]$Output
-    })
+            $Output = [ordered]@{}
+            $Output[$GroupLabel] = $_.Name
+            $Output['Total'] = $_.Count
+            [pscustomobject]$Output
+        })
 }
 
 function New-AbrVbazResourceGroupRegionSummary {
     [CmdletBinding()]
+    [OutputType([array])]
     param (
         [object[]] $Items
     )
@@ -1084,17 +1096,18 @@ function New-AbrVbazResourceGroupRegionSummary {
     }
 
     @($Rows | Group-Object -Property Region | Sort-Object -Property Name | ForEach-Object {
-        $Subscriptions = @($_.Group.Subscription | Sort-Object -Unique)
-        [pscustomobject]@{
-            Region = $_.Name
-            'Resource Groups' = $_.Count
-            Subscriptions = ($Subscriptions -join ', ')
-        }
-    })
+            $Subscriptions = @($_.Group.Subscription | Sort-Object -Unique)
+            [pscustomobject]@{
+                Region = $_.Name
+                'Resource Groups' = $_.Count
+                Subscriptions = ($Subscriptions -join ', ')
+            }
+        })
 }
 
 function Resolve-AbrVbazSubscriptionName {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         [string] $SubscriptionId
     )
@@ -1118,6 +1131,7 @@ function Resolve-AbrVbazSubscriptionName {
 
 function New-AbrVbazResourceGroupSubscriptionSummary {
     [CmdletBinding()]
+    [OutputType([array])]
     param (
         [object[]] $Items
     )
@@ -1135,15 +1149,16 @@ function New-AbrVbazResourceGroupSubscriptionSummary {
     }
 
     @($Rows | Group-Object -Property Subscription | Sort-Object -Property Name | ForEach-Object {
-        [pscustomobject]@{
-            Subscription = $_.Name
-            'Resource Groups' = $_.Count
-        }
-    })
+            [pscustomobject]@{
+                Subscription = $_.Name
+                'Resource Groups' = $_.Count
+            }
+        })
 }
 
 function Resolve-AbrVbazOperationalGroup {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         $InputObject
     )
@@ -1182,6 +1197,7 @@ function Resolve-AbrVbazOperationalGroup {
 
 function Get-AbrVbazJobSessionType {
     [CmdletBinding()]
+    [OutputType([string])]
     param ($InputObject)
 
     $Type = Get-AbrVbazPropertyValue -InputObject $InputObject -Name @('type', 'sessionType', 'jobType')
@@ -1194,6 +1210,7 @@ function Get-AbrVbazJobSessionType {
 
 function Test-AbrVbazMeaningfulSessionType {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         [string] $Type
     )
@@ -1272,6 +1289,7 @@ function Get-AbrVbazJobSessionInfoValue {
 
 function Get-AbrVbazJobSessionPolicyName {
     [CmdletBinding()]
+    [OutputType([string])]
     param ($InputObject)
 
     $PolicyName = Get-AbrVbazJobSessionInfoValue -InputObject $InputObject -Name @('policyName', 'jobName')
@@ -1330,6 +1348,7 @@ function ConvertTo-AbrVbazJobSessionTableObject {
 
 function Get-AbrVbazOperationsDetailMode {
     [CmdletBinding()]
+    [OutputType([string])]
     param ()
 
     if ($Options.PSObject.Properties['OperationsDetailMode'] -and $Options.OperationsDetailMode) {
@@ -1340,6 +1359,7 @@ function Get-AbrVbazOperationsDetailMode {
 
 function Get-AbrVbazStatusOrder {
     [CmdletBinding()]
+    [OutputType([int])]
     param (
         [string] $Status
     )
@@ -1356,6 +1376,7 @@ function Get-AbrVbazStatusOrder {
 
 function Get-AbrVbazStatusColor {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         [string] $Status
     )
@@ -1479,6 +1500,7 @@ function New-AbrVbazCountChart {
 
 function ConvertTo-AbrVbazOverviewStatisticsRows {
     [CmdletBinding()]
+    [OutputType([object[]], [array])]
     param (
         [object[]] $Items
     )
@@ -1522,6 +1544,7 @@ function ConvertTo-AbrVbazOverviewStatisticsRows {
 
 function ConvertTo-AbrVbazStorageUsageRows {
     [CmdletBinding()]
+    [OutputType([object[]])]
     param (
         [object[]] $Items
     )
@@ -1561,6 +1584,7 @@ function ConvertTo-AbrVbazStorageUsageRows {
 
 function Test-AbrVbazAnyHealthCheckEnabled {
     [CmdletBinding()]
+    [OutputType([bool])]
     param ()
 
     if (-not $HealthCheck) {
@@ -1604,6 +1628,7 @@ function New-AbrVbazHealthFinding {
 
 function Get-AbrVbazHealthFindings {
     [CmdletBinding()]
+    [OutputType([object[]], [array])]
     param ()
 
     $Findings = [System.Collections.Generic.List[object]]::new()
@@ -1676,13 +1701,13 @@ function Get-AbrVbazHealthFindings {
     $Sessions = @($script:AbrVbazInventory.JobSessions)
     if ($Sessions.Count -gt 0) {
         $FailedSessions = @($Sessions | Where-Object {
-            $Status = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name @('lastStatus', 'status', 'state', 'result', 'lastResult'))
-            $Status -match '(?i)(failed|error)'
-        }).Count
+                $Status = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name @('lastStatus', 'status', 'state', 'result', 'lastResult'))
+                $Status -match '(?i)(failed|error)'
+            }).Count
         $WarningSessions = @($Sessions | Where-Object {
-            $Status = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name @('lastStatus', 'status', 'state', 'result', 'lastResult'))
-            $Status -match '(?i)warning'
-        }).Count
+                $Status = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name @('lastStatus', 'status', 'state', 'result', 'lastResult'))
+                $Status -match '(?i)warning'
+            }).Count
         if ($FailedSessions -gt 0) {
             $Findings.Add((New-AbrVbazHealthFinding -Category 'Job Sessions' -Item 'Failed sessions' -Severity 'Critical' -Detail "$FailedSessions job session(s) completed with a Failed or Error result."))
         }
@@ -1723,11 +1748,11 @@ function Add-AbrVbazTable {
 
     $Rows = @($InputObject)
     $Rows = @($Rows | Where-Object {
-        $MeaningfulValues = @($_.PSObject.Properties | Where-Object {
-            $_.Name -notlike '*__Style' -and (Test-AbrVbazDisplayValue -Value $_.Value)
+            $MeaningfulValues = @($_.PSObject.Properties | Where-Object {
+                    $_.Name -notlike '*__Style' -and (Test-AbrVbazDisplayValue -Value $_.Value)
+                })
+            $MeaningfulValues.Count -gt 0
         })
-        $MeaningfulValues.Count -gt 0
-    })
     if (-not $Rows) {
         Paragraph "No $Name data was returned by the appliance."
         return
@@ -1783,9 +1808,9 @@ function Add-AbrVbazTable {
     }
 
     $Columns = @($Columns | Where-Object {
-        $ColumnName = $_
-        @($Rows | Where-Object { Test-AbrVbazDisplayValue -Value $_.$ColumnName }).Count -gt 0
-    })
+            $ColumnName = $_
+            @($Rows | Where-Object { Test-AbrVbazDisplayValue -Value $_.$ColumnName }).Count -gt 0
+        })
 
     if ($Columns.Count -lt 2) {
         foreach ($Row in $Rows) {
