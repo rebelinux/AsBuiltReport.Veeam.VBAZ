@@ -1,0 +1,38 @@
+name: Tests
+on: [ push, pull_request ]
+
+jobs:
+    pester:
+        name: Run Pester tests
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Install dependencies
+              shell: pwsh
+              run: |
+                  Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+                  $deps = 'PScribo', 'AsBuiltReport.Core', 'AsBuiltReport.Chart', 'AsBuiltReport.Diagram', 'PSScriptAnalyzer'
+                  foreach ($dep in $deps) {
+                      Install-Module -Name $dep -Scope CurrentUser -Force -AllowClobber
+                  }
+                  Install-Module -Name Pester -MinimumVersion 5.0.0 -Scope CurrentUser -Force -SkipPublisherCheck
+
+            - name: Run Pester
+              shell: pwsh
+              run: |
+                  Import-Module Pester -MinimumVersion 5.0.0 -Force
+                  $config = New-PesterConfiguration
+                  $config.Run.Path = './Tests'
+                  $config.Run.Exit = $true
+                  $config.Output.Verbosity = 'Detailed'
+                  $config.TestResult.Enabled = $true
+                  $config.TestResult.OutputPath = 'testResults.xml'
+                  Invoke-Pester -Configuration $config
+
+            - name: Upload test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: pester-test-results
+                  path: testResults.xml

@@ -1,0 +1,15 @@
+# Generated As Built Report output
+*.docx
+*.html
+*.xlsx
+*.pdf
+~$*
+
+# Packaged module / archives
+*.zip
+
+# OS / editor cruft
+.vs/
+*.user
+.DS_Store
+Thumbs.db

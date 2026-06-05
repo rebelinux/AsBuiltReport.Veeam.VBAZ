@@ -1,0 +1,84 @@
+{
+  "Report": {
+    "Name": "Veeam Backup for Microsoft Azure As Built Report - Level 2",
+    "Version": "1.0",
+    "Status": "Preview",
+    "Language": "en-US",
+    "ShowCoverPageImage": true,
+    "ShowTableOfContents": true,
+    "ShowHeaderFooter": true,
+    "ShowTableCaptions": true
+  },
+  "Options": {
+    "_comment_": "OperationsDetailMode (Summary|Grouped|Full) controls per-session and per-restore-point detail independently of InfoLevel; use Full only when a full operational appendix is wanted. StaleBackupThresholdDays flags protected workloads whose last backup is older than this many days.",
+    "ReportStyle": "Veeam",
+    "ApiPort": 443,
+    "ApiVersion": "v8.1",
+    "SkipCertificateCheck": true,
+    "CapturePath": "",
+    "PageSize": 500,
+    "MaxTableRows": 0,
+    "TableChunkSize": 500,
+    "OperationsDetailMode": "Grouped",
+    "StaleBackupThresholdDays": 7,
+    "EnableCharts": true,
+    "EnableDiagrams": true,
+    "EnableDiagramLogo": true,
+    "EnableDiagramDebug": false,
+    "DiagramTheme": "White",
+    "DiagramWaterMark": "",
+    "ExportDiagrams": false,
+    "ExportDiagramsFormat": [
+      "png"
+    ],
+    "EnableDiagramSignature": false,
+    "SignatureAuthorName": "",
+    "SignatureCompanyName": "",
+    "RoundUnits": 1,
+    "UpdateCheck": true
+  },
+  "InfoLevel": {
+    "_comment_": "0 = Disabled, 1 = Summary, 2 = Detailed, 3 = Deep diagnostic. See README.md for the VBAZ level matrix.",
+    "System": {
+      "Appliance": 2,
+      "License": 2,
+      "ConfigurationBackup": 2,
+      "Security": 2
+    },
+    "Infrastructure": {
+      "Accounts": 2,
+      "Subscriptions": 2,
+      "Regions": 2,
+      "Repositories": 2,
+      "Workers": 2,
+      "Discovery": 0
+    },
+    "Protection": {
+      "Policies": 2,
+      "ProtectedItems": 2,
+      "Templates": 2
+    },
+    "Operations": {
+      "Sessions": 2,
+      "RestorePoints": 2,
+      "Overview": 2
+    }
+  },
+  "HealthCheck": {
+    "System": {
+      "License": true,
+      "ConfigurationBackup": true,
+      "Security": true
+    },
+    "Infrastructure": {
+      "Repositories": true,
+      "Workers": true
+    },
+    "Protection": {
+      "Policies": true
+    },
+    "Operations": {
+      "Sessions": true
+    }
+  }
+}
