@@ -20,7 +20,7 @@ function Invoke-AsBuiltReport.Veeam.VBAZ {
         Github:         AsBuiltReport
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
     .LINK
-        https://github.com/acgdickie/AsBuiltReport.Veeam.VBAZ
+        https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VBAZ
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Scope = 'Function')]
     [CmdletBinding()]

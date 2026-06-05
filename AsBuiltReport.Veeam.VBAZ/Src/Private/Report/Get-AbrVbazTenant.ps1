@@ -9,7 +9,7 @@ function Get-AbrVbazTenant {
         Author:         AsBuiltReport Community
         Github:         AsBuiltReport
     .LINK
-        https://github.com/acgdickie/AsBuiltReport.Veeam.VBAZ
+        https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VBAZ
     #>
     [CmdletBinding()]
     param ()

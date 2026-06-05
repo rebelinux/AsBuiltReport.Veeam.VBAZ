@@ -9,7 +9,7 @@ function Get-AbrVbazAzureAccount {
         Author:         AsBuiltReport Community
         Github:         AsBuiltReport
     .LINK
-        https://github.com/acgdickie/AsBuiltReport.Veeam.VBAZ
+        https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VBAZ
     #>
     [CmdletBinding()]
     param ()
@@ -22,15 +22,15 @@ function Get-AbrVbazAzureAccount {
 
     Section -Style Heading3 $LocalizedData.Heading {
         Add-AbrVbazTable -Name 'Azure Service Accounts' -InputObject (@($script:AbrVbazInventory.AzureServiceAccounts) | ForEach-Object {
-            [pscustomobject][ordered]@{
-                Name = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'name')
-                Region = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'region')
-                'Tenant ID' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'tenantId')
-                'Cloud State' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'cloudState')
-                'Azure Permissions State' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'azurePermissionsState')
-                'Used for Workers' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'selectedForWorkermanagement')
-                'Subscription for Worker Deployment' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'subscriptionIdForWorkerDeployment')
-            }
-        })
+                [pscustomobject][ordered]@{
+                    Name = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'name')
+                    Region = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'region')
+                    'Tenant ID' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'tenantId')
+                    'Cloud State' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'cloudState')
+                    'Azure Permissions State' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'azurePermissionsState')
+                    'Used for Workers' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'selectedForWorkermanagement')
+                    'Subscription for Worker Deployment' = ConvertTo-AbrVbazDisplayValue -InputObject (Get-AbrVbazPropertyValue -InputObject $_ -Name 'subscriptionIdForWorkerDeployment')
+                }
+            })
     }
 }
